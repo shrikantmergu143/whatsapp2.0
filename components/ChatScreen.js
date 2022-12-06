@@ -17,6 +17,7 @@ import {
   Timestamp,
   addDoc,
   where,
+  updateDoc
 } from "firebase/firestore";
 import Message from "./Message";
 import { useRef, useState } from "react";
@@ -38,13 +39,15 @@ function Chatscreen({ chat, messages }) {
   const [recipientSnapshot] = useCollection(
     query(collection(db, "users"), where("email", "==", recipientEmail))
   );
+  // console.log("docRef", recipientSnapshot)
 
   const showMessages = () => {
     if (messagesSnapshot) {
-      return messagesSnapshot.docs.map((message) => (
+      return messagesSnapshot?.docs?.map((message) => (
         <Message
           key={message.id}
           user={message.data().user}
+          router_id={router?.query?.id}
           message={{
             ...message.data(),
             timestamp: message.data().timestamp?.toDate().getTime(),
@@ -61,7 +64,7 @@ function Chatscreen({ chat, messages }) {
   const scrollToBottom = () => {
     endOfMessagesRef.current.scrollIntoView({
       behavior: "smooth",
-      block: "start",
+      block: "end",
     });
   };
 
@@ -83,6 +86,8 @@ function Chatscreen({ chat, messages }) {
       message: input,
       user: user.email,
       photoURL: user.photoURL,
+      delivered:null,
+      seen:null
     });
 
     setInput("");
@@ -97,18 +102,18 @@ function Chatscreen({ chat, messages }) {
         <Avatar />
 
         <HeaderInformation>
-          <h3>{recipientEmail}</h3>
+          <H3>{recipientEmail}</H3>
           {recipientSnapshot ? (
-            <p>
+            <P>
               Last active:{" "}
               {recipient?.lastSeen?.toDate() ? (
                 <TimeAgo datetime={recipient?.lastSeen?.toDate()} />
               ) : (
                 "Unavailable"
               )}
-            </p>
+            </P>
           ) : (
-            <p>Loading last active...</p>
+            <P>Loading last active...</P>
           )}
         </HeaderInformation>
         <HeaderIcons>
@@ -182,6 +187,16 @@ const MessageContainer = styled.div`
 
 const EndOfMessage = styled.div`
   margin-bottom: 50px;
+`;
+
+export const H3 = styled.h3`
+  margin: 0px;
+`;
+export const H4 = styled.h4`
+  margin: 0px;
+`;
+export const P = styled.p`
+  margin: 0px;
 `;
 
 const InputContainer = styled.form`

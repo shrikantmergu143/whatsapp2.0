@@ -1,13 +1,12 @@
 const environment = {
   firebaseConfig: {
-    apiKey: "AIzaSyA455IScPVXoVAjMP8Kjpogbc2rVM_u0WA",
-    authDomain: "instashre-2c6a1.firebaseapp.com",
-    databaseURL: "https://instashre-2c6a1-default-rtdb.firebaseio.com",
-    projectId: "instashre-2c6a1",
-    storageBucket: "instashre-2c6a1.appspot.com",
-    messagingSenderId: "758145740018",
-    appId: "1:758145740018:web:aee92e0bc9870e5161346b",
-    measurementId: "G-P01S3D0MBH"
+    apiKey: "AIzaSyAazTQtbVUpAKbNvbX-7Lq9-DOHCSYmOkc",
+    authDomain: "my-instagram-clone-143.firebaseapp.com",
+    databaseURL: "https://my-instagram-clone-143-default-rtdb.firebaseio.com",
+    projectId: "my-instagram-clone-143",
+    storageBucket: "my-instagram-clone-143.appspot.com",
+    messagingSenderId: "90861503110",
+    appId: "1:90861503110:web:9a57a27fdcad76912a8707"
   },
 };
 
