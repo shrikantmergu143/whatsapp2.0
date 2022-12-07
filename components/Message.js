@@ -1,32 +1,51 @@
 import styled from "styled-components";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { auth } from "../firebase";
 import moment from "moment";
+import { auth, db } from "../firebase";
+import messages_doublemark from "./../img/messages_doublemark.svg"
 import {
   collection,
   doc,
   orderBy,
   query,
-  setDoc,
   Timestamp,
   addDoc,
   where,
-  updateDoc
+  setDoc,
+  updateDoc 
 } from "firebase/firestore";
 
-function Message({ user, message, router_id }) {
+function Message({ user, message, router_id, id }) {
   const [userLoggedIn] = useAuthState(auth);
-
+  const SeenMessages = () =>{
+    if((!message.seen) && user !== userLoggedIn.email){
+      const colRef = doc(db, `chats/${router_id}/messages/${id}`);
+      setDoc(colRef, {
+        seen:Timestamp.now(),
+      },
+      { merge: true });
+    }
+  }
   const TypeOfMessage = user === userLoggedIn.email ? Sender : Receiver;
+  const MessagesType = user === userLoggedIn.email ? "Sender" : "Receiver";
 
   return (
     <Container>
-      <TypeOfMessage>
-        {message.message}
-        <Timestamp1>
-          {message.timestamp ? moment(message.timestamp).format("LT") : "..."}
-        </Timestamp1>
+      <div className={"MessagesInner " +MessagesType}>
+      <TypeOfMessage className={"MessagesBox "}>
+            {SeenMessages()}
+            <p className={"text_messages"}>{message.message}</p>
+            {/* <div className={"messages_status_div"}/> */}
+            <div className={"messages_status"}>
+                <span className={"timemessages"}>
+                  {message.timestamp ? moment(message.timestamp).format("LT") : "..."}
+                </span>
+              {user === userLoggedIn.email && (message?.delivered && (!message?.seen) )&&  <span className={"MessagesStatus Delivered"}/>}
+              {user === userLoggedIn.email && (message?.seen && message?.delivered)&&  <span className={"MessagesStatus Delivered seen"}/>}
+              {user === userLoggedIn.email && ((!message?.delivered) && (!message?.seen))&&  <span className={"MessagesStatus unRead"}/>}
+            </div>
       </TypeOfMessage>
+      </div>
     </Container>
   );
 }
@@ -35,20 +54,16 @@ export default Message;
 
 const Container = styled.div``;
 
-const MessageElement = styled.p`
+const MessageElement = styled.div`
   width: fit-content;
-  padding: 15px;
   border-radius: 8px;
-  margin: 10px;
-  min-width: 60px;
-  padding-bottom: 26px;
   position: relative;
   text-align: right;
 `;
 
 const Sender = styled(MessageElement)`
-  margin-left: auto;
   background-color: #dcf8c6;
+  padding: 15px 30px 30px 30px;
 `;
 
 const Receiver = styled(MessageElement)`
@@ -58,10 +73,10 @@ const Receiver = styled(MessageElement)`
 
 const Timestamp1 = styled.span`
   color: gray;
-  padding: 10px;
   font-size: 9px;
   position: absolute;
-  bottom: 0;
+  bottom: 10px;
   text-align: right;
-  right: 0;
+  right: 30px;
+  width:100%
 `;

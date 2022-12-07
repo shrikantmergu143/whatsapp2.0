@@ -44,21 +44,24 @@ function Chatscreen({ chat, messages }) {
   const showMessages = () => {
     if (messagesSnapshot) {
       return messagesSnapshot?.docs?.map((message) => (
+        <>
         <Message
           key={message.id}
+          id={message.id}
           user={message.data().user}
           router_id={router?.query?.id}
           message={{
             ...message.data(),
-            timestamp: message.data().timestamp?.toDate().getTime(),
+            timestamp: message.data().timestamp?.toDate().getTime(),//message.data().timestamp?.toDate().getTime()
           }}
         />
+        </>
       ));
     } else {
       return JSON.parse(messages).map((message) => (
-        <Message key={message.id} user={message.user} message={message} />
+        <Message key={message.id} id={message.id} router_id={router?.query?.id} user={message.user} message={message} />
       ));
-    }
+    } 
   };
 
   const scrollToBottom = () => {
@@ -71,7 +74,7 @@ function Chatscreen({ chat, messages }) {
   const sendMessage = (e) => {
     e.preventDefault();
 
-    const docRef = doc(db, `chats/${user.uid}`);
+    const docRef = doc(db, `users/${user.uid}`);
     setDoc(
       docRef,
       {
@@ -79,7 +82,6 @@ function Chatscreen({ chat, messages }) {
       },
       { merge: true }
     );
-
     const colRef = collection(db, `chats/${router.query.id}/messages`);
     addDoc(colRef, {
       timestamp: Timestamp.now(),
@@ -89,7 +91,6 @@ function Chatscreen({ chat, messages }) {
       delivered:null,
       seen:null
     });
-
     setInput("");
     scrollToBottom();
   };

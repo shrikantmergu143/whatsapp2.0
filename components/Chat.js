@@ -1,5 +1,5 @@
 import { Avatar } from "@mui/material";
-import { collection, query, where, orderBy } from "firebase/firestore";
+import { collection, query, where, orderBy, setDoc, doc, Timestamp   } from "firebase/firestore";
 import { useRouter } from "next/router";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useCollection } from "react-firebase-hooks/firestore";
@@ -23,15 +23,25 @@ function Chat({ id, users }) {
     )
   );
   
-  const Messages = messagesSnapshot && messagesSnapshot?.docs?.map(item=>item.data());
+  const Messages = messagesSnapshot && messagesSnapshot?.docs?.map(item=>({id:item.id, ...item.data()}));
   let LastMessages = Messages && Messages[Messages?.length -1];
-  console.log("LastMessages", LastMessages)
   const enterChat = () => {
     router.push(`/chat/${id}`);
   };
-
+  const SeenMessages = () =>{
+    Messages && Messages?.map((item)=>{
+      if(user.email !== item?.user && item?.delivered === null){
+        const colRef = doc(db, `chats/${id}/messages/${item?.id}`);
+        setDoc(colRef, {
+          delivered:Timestamp.now(),
+        },
+        { merge: true })
+      }
+    })
+  }
   return (
     <Container onClick={enterChat}>
+      {SeenMessages()}
       {recipientUser ? (
         <UserAvatar src={recipientUser.photoURL} />
       ) : (

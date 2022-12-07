@@ -14,3 +14,101 @@ a {
 * {
   box-sizing: border-box;
 }
+
+span.MessagesStatus{ 
+  height: 14px;
+  display: block;
+  mask-position: center;
+  transform: scale(0.9);
+  mask-repeat: no-repeat;
+  width: 17px;
+  mask-image: url(../img/messages_doublemark.svg);
+}
+span.Delivered{
+  background-color: #82848da8;
+}
+span.Delivered.seen{
+  background-color: lightgreen;
+}
+span.unRead{
+  height: 14px;
+  display: block;
+  mask-position: center;
+  mask-repeat: no-repeat;
+  mask-image: url(../img/messages_mark.svg);
+  background-color: #82848da8;
+}
+.MessagesBox{
+  font-size: 14px;
+  padding: 6px 60px 8px 9px!important;
+  display: flex;
+}
+.Receiver .MessagesBox{
+  font-size: 14px;
+  padding: 6px 60px 8px 9px!important;
+  border-top-left-radius: 0;
+  display: flex;
+}
+.Receiver .MessagesBox::after{
+  content: '';
+  position: absolute;
+  top: 0px;
+  display: block;
+  left: -19px;
+  border: 10px solid #ff000000;
+  border-right: 12px solid whitesmoke;
+  border-top: 0px;
+}
+.MessagesBox .messages_status{
+  display: flex;
+  grid-gap: 5px;
+  gap: 5px;
+  align-items: center;
+  position: absolute;
+  flex-direction: row;
+  bottom: 5px;
+}
+.Receiver .MessagesBox .messages_status{
+  right: 7px;
+  justify-content: flex-end;
+}
+.Sender .MessagesBox{
+  border-top-right-radius: 0;
+}
+.Sender .MessagesBox::after{
+  content: '';
+  position: absolute;
+  top: 0px;
+  display: block;
+  right: -19px;
+  border: 10px solid #ff000000;
+  border-left: 12px solid #dcf8c6;
+  border-top: 0px;
+}
+.Sender .MessagesBox .messages_status{
+  justify-content: flex-end;
+  right: 7px;
+}
+.MessagesInner.Sender {
+  margin-left: auto;
+}
+.MessagesInner.Sender .MessagesBox .text_messages{
+  margin: 0px 20px 0px 0px;
+  position: relative;
+  float: left;
+}
+.MessagesInner.Receiver .MessagesBox .text_messages{
+  margin: 0px 20px 0px 0px;
+  position: relative;
+  float: left;
+}
+.MessagesInner{
+  width: fit-content;
+  border-radius: 8px;
+  margin-left: auto;  
+  margin: 10px;
+  position: relative;
+}
+.MessagesInner .MessagesBox .timemessages{
+  font-size: 10px;
+}
