@@ -8,8 +8,7 @@ import { auth, db } from "../firebase";
 import getRecipientEmail from "../utils/getRecipientEmail";
 import { H3, H4, P } from "./ChatScreen";
 
-function Chat({ id, users }) {
-  const router = useRouter();
+function Chat({ id, users, router }) {
   const [user] = useAuthState(auth);
   const recipientEmail = getRecipientEmail(users, user);
   const [recipientSnapshot] = useCollection(

@@ -13,16 +13,19 @@ import {
 import { auth, db } from "../../firebase";
 import { useAuthState } from "react-firebase-hooks/auth";
 import getRecipientEmail from "../../utils/getRecipientEmail";
+import { useRouter } from "next/router";
 
 function Chat({ chat, messages }) {
   const [user] = useAuthState(auth);
+  const router = useRouter();
+
 
   return (
     <Container>
       <Head>
         <title>Chat with {getRecipientEmail(chat.users, user)}</title>
       </Head>
-      <Sidebar />
+      <Sidebar router={router} />
       <ChatContainer>
         <ChatScreen chat={chat} messages={messages} />
       </ChatContainer>
@@ -40,8 +43,7 @@ export async function getServerSideProps(context) {
   const messagesQuery = query(colRef, orderBy("timestamp", "asc"));
   const messagesRes = await getDocs(messagesQuery);
 
-  const messages = messagesRes.docs
-    .map((doc) => ({
+  const messages = messagesRes?.docs?.map((doc) => ({
       id: doc.id,
       ...doc.data(),
     }))
@@ -56,7 +58,7 @@ export async function getServerSideProps(context) {
     id: chatRes.id,
     ...chatRes.data(),
   };
-
+  console.log("messages", messages)
   return {
     props: {
       messages: JSON.stringify(messages),

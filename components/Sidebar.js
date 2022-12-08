@@ -11,7 +11,8 @@ import { auth, db } from "../firebase";
 import { collection, addDoc, query, where } from "firebase/firestore";
 import Chat from "./Chat";
 
-function Sidebar() {
+function Sidebar(props) {
+  const { router } = props;
   const [user] = useAuthState(auth);
   const userChatRef = query(
     collection(db, "chats"),
@@ -53,6 +54,7 @@ function Sidebar() {
         <UserAvatar
           src={user.photoURL}
           onClick={() => {
+            router.push(`../`);
             signOut(auth);
           }}
         />
@@ -76,7 +78,7 @@ function Sidebar() {
       <SidebarButton onClick={createChat}>Start a New Chat</SidebarButton>
 
       {chatsSnapshot?.docs.map((chat) => (
-        <Chat key={chat.id} id={chat.id} users={chat.data().users} />
+        <Chat router={router} key={chat.id} id={chat.id} users={chat.data().users} />
       ))}
     </Container>
   );

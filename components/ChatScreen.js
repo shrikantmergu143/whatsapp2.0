@@ -23,7 +23,21 @@ import Message from "./Message";
 import { useRef, useState } from "react";
 import getRecipientEmail from "../utils/getRecipientEmail";
 import TimeAgo from "timeago-react";
-
+export function generateUUID() { // Public Domain/MIT
+  var d = new Date().getTime();//Timestamp
+  var d2 = ((typeof performance !== 'undefined') && performance.now && (performance.now()*1000)) || 0;//Time in microseconds since page-load or 0 if unsupported
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+      var r = Math.random() * 16;//random number between 0 and 16
+      if(d > 0){//Use timestamp until depleted
+          r = (d + r)%16 | 0;
+          d = Math.floor(d/16);
+      } else {//Use microseconds since page-load if supported
+          r = (d2 + r)%16 | 0;
+          d2 = Math.floor(d2/16);
+      }
+      return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+  });
+}
 function Chatscreen({ chat, messages }) {
   const [user] = useAuthState(auth);
   const [input, setInput] = useState("");
@@ -44,7 +58,6 @@ function Chatscreen({ chat, messages }) {
   const showMessages = () => {
     if (messagesSnapshot) {
       return messagesSnapshot?.docs?.map((message) => (
-        <>
         <Message
           key={message.id}
           id={message.id}
@@ -55,7 +68,6 @@ function Chatscreen({ chat, messages }) {
             timestamp: message.data().timestamp?.toDate().getTime(),//message.data().timestamp?.toDate().getTime()
           }}
         />
-        </>
       ));
     } else {
       return JSON.parse(messages).map((message) => (
@@ -71,21 +83,22 @@ function Chatscreen({ chat, messages }) {
     });
   };
 
-  const sendMessage = (e) => {
+  const sendMessage = (e, chat_type, messagess) => {
     e.preventDefault();
-
+    const UUID = generateUUID();
     const docRef = doc(db, `users/${user.uid}`);
-    setDoc(
-      docRef,
-      {
+    setDoc(docRef,{
         lastSeen: Timestamp.now(),
       },
       { merge: true }
     );
-    const colRef = collection(db, `chats/${router.query.id}/messages`);
-    addDoc(colRef, {
+    
+    const colRef = doc(db, `chats/${router.query.id}/messages/${UUID}`);
+    setDoc(colRef, {
+      id:UUID,
       timestamp: Timestamp.now(),
-      message: input,
+      message: messagess,
+      message_type: chat_type,
       user: user.email,
       photoURL: user.photoURL,
       delivered:null,
@@ -137,7 +150,7 @@ function Chatscreen({ chat, messages }) {
           <InsertEmoticonIcon />
         </IconButton>
         <Input value={input} onChange={(e) => setInput(e.target.value)} />
-        <button hidden disabled={!input} type="submit" onClick={sendMessage}>
+        <button hidden disabled={!input} type="submit" onClick={(e)=>sendMessage(e, "text", input)}>
           Send Message
         </button>
         <IconButton>

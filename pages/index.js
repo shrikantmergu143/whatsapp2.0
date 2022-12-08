@@ -1,7 +1,10 @@
 import Head from "next/head";
 import Sidebar from "../components/Sidebar";
+import { useRouter } from "next/router";
 
 export default function Home() {
+  const router = useRouter();
+  
   return (
     <div>
       <Head>
@@ -10,7 +13,7 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <Sidebar></Sidebar>
+      <Sidebar router={router} />
     </div>
   );
 }
