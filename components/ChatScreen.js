@@ -69,7 +69,8 @@ function Chatscreen({ chat, messages }) {
           }}
         />
       ));
-    } else {
+    } 
+    else {
       return JSON.parse(messages).map((message) => (
         <Message key={message.id} id={message.id} router_id={router?.query?.id} user={message.user} message={message} />
       ));
